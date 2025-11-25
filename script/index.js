@@ -51,9 +51,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // 카드별 등장 시점 (점점 텀 길어지는 구조)
         const t2 = 0.10; // 2번
         const t3 = 0.20; // 3번
-        const t4 = 0.38; // 4번
-        const t5 = 0.56; // 5번
-        const t6 = 0.76; // 6번
+        const t4 = 0.40; // 4번
+        const t5 = 0.62; // 5번
+        const t6 = 0.80; // 6번
 
         let count = 1; // 기본 1장 (1번)
 

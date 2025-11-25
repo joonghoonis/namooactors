@@ -76,7 +76,7 @@ body #wrap main #hero {
   background-repeat: no-repeat;
   background-size: cover; /* or contain */
   background-position: center;
-  background-image: url(/images/main/main_bg.jpg);
+  background-image: url(../images/main/main_bg.jpg);
   position: relative;
 }
 body #wrap main #hero .hero_inner .main_t {

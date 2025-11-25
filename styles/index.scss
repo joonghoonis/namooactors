@@ -82,7 +82,7 @@ body {
             }
             #hero {
                 @include bgset;
-                background-image: url(/images/main/main_bg.jpg);
+                background-image: url(../images/main/main_bg.jpg);
                 position: relative;
                 .hero_inner {
                     .main_t { 
