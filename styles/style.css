@@ -177,10 +177,11 @@ body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_car
   letter-spacing: 0.08em;
 }
 body #wrap main #media {
-  padding: 0 7.8%;
+  position: relative;
   height: 100vh;
 }
 body #wrap main #media .media_scroll {
+  padding: 0 7.8%;
   height: 100%;
   overflow-y: scroll;
   scrollbar-width: none;
@@ -190,12 +191,13 @@ body #wrap main #media .media_scroll::-webkit-scrollbar {
   display: none;
 }
 body #wrap main #media .brand_1 {
-  height: 40vh;
-  margin-top: 500px;
+  width: 100%;
 }
 body #wrap main #media .brand_1 .brand_1_inner {
+  width: 1620px;
+  position: absolute;
   display: flex;
-  flex-flow: row nowrap;
+  top: 35%;
   justify-content: space-between;
   align-items: center;
 }
@@ -214,7 +216,6 @@ body #wrap main #media .brand_1 .brand_1_inner .right_text_ko {
   display: flex;
   flex-flow: column nowrap;
   gap: 20px;
-  align-items: end;
 }
 body #wrap main #media .brand_1 .brand_1_inner .right_text_ko span {
   font-family: "Noto Sans KR", sans-serif;
@@ -222,8 +223,31 @@ body #wrap main #media .brand_1 .brand_1_inner .right_text_ko span {
   font-weight: 100;
   font-size: 40px;
 }
+body #wrap main #media .brand_1 .text1, body #wrap main #media .brand_1 .text2, body #wrap main #media .brand_1 .text3 {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+body #wrap main #media .brand_1 .text-show {
+  opacity: 1;
+  transform: translateY(0);
+}
+body #wrap main #media .brand_1 .text-hide {
+  opacity: 0;
+  transform: translateY(10px);
+}
 body #wrap main #media .media_inner {
-  height: 100vh;
+  height: 80vh;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+body #wrap main #media .media_inner .section_title {
+  margin-top: 100px;
+}
+body #wrap main #media .media_inner.media-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 body #wrap main #media .media_inner .contents {
   display: flex;
@@ -239,8 +263,13 @@ body #wrap main #media .media_inner .contents .category {
   text-align: center;
 }
 body #wrap main #media .media_inner .contents .category li button {
-  color: #fff;
+  background: none;
+  border: none;
+  color: #444;
   font-size: 17px;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  transition: color 0.4s ease;
 }
 body #wrap main #media .media_inner .contents .category::after, body #wrap main #media .media_inner .contents .category::before {
   content: "";
@@ -248,6 +277,27 @@ body #wrap main #media .media_inner .contents .category::after, body #wrap main 
   width: 125px;
   height: 1px;
   background-color: #333;
+}
+body #wrap main #media .media_inner .contents .category li.depth-0 button {
+  color: #ffffff !important;
+}
+body #wrap main #media .media_inner .contents .category li.depth-1 button {
+  color: #888;
+}
+body #wrap main #media .media_inner .contents .category li.depth-2 button {
+  color: #666;
+}
+body #wrap main #media .media_inner .contents .category li.depth-3 button {
+  color: #444;
+}
+body #wrap main #media .media_inner .contents {
+  /* 안전빵: 3칸 넘어가는 건 전부 제일 어두운 톤 */
+}
+body #wrap main #media .media_inner .contents .category li:not(.depth-0):not(.depth-1):not(.depth-2):not(.depth-3) button {
+  color: #444;
+}
+body #wrap main #media .media_inner .contents .category li button:hover {
+  color: #ccc;
 }
 body #wrap main #media .media_inner .contents .media_contents .interview {
   display: flex;
@@ -257,6 +307,7 @@ body #wrap main #media .media_inner .contents .media_contents .interview {
 }
 body #wrap main #media .media_inner .contents .media_contents .interview .interview_card {
   overflow: hidden;
+  position: relative;
   width: 450px;
   height: 650px;
 }
@@ -265,8 +316,44 @@ body #wrap main #media .media_inner .contents .media_contents .interview .interv
   height: 100%;
   object-fit: cover;
 }
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card .interview_text {
+  position: absolute;
+  bottom: 40px;
+  left: 30px;
+  font-weight: 400;
+  color: #fff;
+  font-size: 18px;
+  z-index: 2;
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card .interview_text em {
+  font-size: 27px;
+  font-weight: 500;
+}
 body #wrap main #media .media_inner .contents .media_contents .interview .interview_card:nth-child(1) a img {
-  transform: translate(5%, 50%) scale(2);
+  transform: translate(5%, 45%) scale(2);
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card:nth-child(2) a img {
+  transform: translate(-5%, 25%) scale(1.5);
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0));
+  z-index: 1;
+  pointer-events: none;
+}
+body #wrap main #media .media_inner .contents .media_contents > div {
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+body #wrap main #media .media_inner .contents .media_contents > div.is-active {
+  opacity: 1;
+  pointer-events: auto;
 }
 body #wrap main .brand_2 {
   padding: 100px 7.8%;
