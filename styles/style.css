@@ -1,8 +1,8 @@
 @charset "UTF-8";
-html {
-  scroll-behavior: smooth;
+body #wrap #hero, body #wrap #artist, body #wrap #media, body #wrap #filmo, body #wrap #now, body #wrap #audi {
+  height: 100%;
+  box-sizing: border-box;
 }
-
 body #wrap {
   background: #060606;
 }
@@ -10,7 +10,7 @@ body #wrap header {
   position: fixed;
   top: 0;
   z-index: 999;
-  padding: 20px 30px;
+  padding: 15px 30px 10px;
   width: 100%;
   opacity: 1;
   transition: transform 0.6s ease, background-color 0.4s ease, opacity 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
@@ -25,41 +25,43 @@ body #wrap header .header_inner {
 body #wrap header .header_inner .logo {
   transition: transform 0.3s;
 }
+body #wrap header .header_inner .logo svg {
+  transform: scale(0.8);
+}
+body #wrap header .header_inner .logo svg path {
+  transition: fill 0.5s;
+}
 body #wrap header .header_inner .nav ul {
   display: flex;
   flex-flow: row nowrap;
-  gap: 30px;
+  gap: 35px;
 }
 body #wrap header .header_inner .nav ul li a {
   color: #fff;
   transition: color 0.3s;
 }
-body #wrap header.scrolled {
+body #wrap header:hover {
   box-shadow: 0 8px 10px rgba(0, 0, 0, 0.08);
   background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(1px);
-  padding: 5px 30px;
+  backdrop-filter: blur(2px);
 }
-body #wrap header.scrolled .header_inner .logo {
-  transform: scale(0.7);
+body #wrap header:hover .header_inner .logo svg .tree_bottom {
+  fill: #888;
 }
-body #wrap header.scrolled .header_inner .nav ul li a {
-  color: #222;
+body #wrap header:hover .header_inner .logo svg .tree_top {
+  fill: #fff;
 }
-body #wrap header.scrolled:hover {
-  background-color: rgb(255, 255, 255);
-}
-body #wrap header.hide {
-  transform: translateY(-30%);
-  opacity: 0;
-  pointer-events: none;
+body #wrap header:hover .header_inner .nav ul li a {
+  color: #000;
 }
 body #wrap main {
+  width: 100%;
+  height: 100vh; /* main의 높이를 뷰포트 높이로 설정 */
   /* 공통 */
 }
 body #wrap main .section_title {
   text-align: center;
-  margin: 0 auto;
+  margin: 0 auto 30px;
 }
 body #wrap main .section_title .title {
   font-size: 1.75rem;
@@ -67,35 +69,33 @@ body #wrap main .section_title .title {
   margin-bottom: 10px;
 }
 body #wrap main .section_title .sub_title {
-  font-size: 1.063rem;
+  font-size: 0.938rem;
   color: #999;
 }
-body #wrap main .hero {
-  width: 100%;
-  height: 100vh;
+body #wrap main #hero {
   background-repeat: no-repeat;
   background-size: cover; /* or contain */
   background-position: center;
   background-image: url(/images/main/main_bg.jpg);
   position: relative;
 }
-body #wrap main .hero .hero_inner .main_t {
+body #wrap main #hero .hero_inner .main_t {
   position: absolute;
   bottom: 38%;
   left: 12%;
   color: #fff;
 }
-body #wrap main .hero .hero_inner .main_t .main_t_40 {
+body #wrap main #hero .hero_inner .main_t .main_t_40 {
   font-weight: 300;
   font-size: 40px;
   margin-bottom: 25px;
 }
-body #wrap main .hero .hero_inner .main_t .main_t_80 {
+body #wrap main #hero .hero_inner .main_t .main_t_80 {
   font-size: 80px;
   font-weight: 100;
   font-family: "Bad Script", sans-serif;
 }
-body #wrap main .hero .hero_inner .sub_t {
+body #wrap main #hero .hero_inner .sub_t {
   font-size: 1.25rem;
   color: #fff;
   position: absolute;
@@ -104,78 +104,169 @@ body #wrap main .hero .hero_inner .sub_t {
   font-family: "Noto Serif", sans-serif;
   font-weight: 200;
 }
-body #wrap main .artist {
+body #wrap main #artist {
   padding: 100px 0 100px 7.8%;
+  position: relative;
   height: 100vh;
+  overflow: hidden;
 }
-body #wrap main .artist .artist_inner {
+body #wrap main #artist .artist_inner {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-body #wrap main .artist .artist_inner .artist_scroller {
+body #wrap main #artist .artist_inner .artist_scroller {
   margin-top: 30px;
   flex: 1;
-}
-body #wrap main .artist .artist_inner .artist_scroller .artist_list {
+  width: 100%;
   display: flex;
-  flex-flow: row nowrap;
-  gap: 50px;
+  align-items: center;
 }
-body #wrap main .artist .artist_inner .artist_scroller .artist_list .artist_card {
-  flex: 0 0 450px;
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper #first_card {
+  transition: opacity 2s ease, transform 2s ease;
+  transform: translateY(50px);
 }
-body #wrap main .artist .artist_inner .artist_scroller .artist_list .artist_card .artist_figure {
-  max-width: 450px;
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper #first_card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card {
+  flex: 0 0 auto;
+  width: 450px;
   height: 675px;
+  transition: opacity 1s ease, transform 1s ease;
+  opacity: 0;
+  transform: translateY(50px);
 }
-body #wrap main .artist .artist_inner .artist_scroller .artist_list .artist_card .artist_figure img {
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card .artist_figure {
+  max-width: 450px;
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card .artist_figure img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: grayscale(100%);
+  transition: filter 0.5s;
 }
-body #wrap main .artist .artist_inner .artist_scroller {
-  overflow-x: auto;
-  overflow-y: hidden;
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card:hover .artist_figure img {
+  filter: grayscale(0);
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card.artist_more {
+  width: 200px;
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card.artist_more a {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 5px;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card.artist_more:hover .plus {
+  animation: artistMore 0.75s;
+}
+body #wrap main #artist .artist_inner .artist_scroller #artistSwiper .artist_card.artist_more .label {
+  color: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+body #wrap main #media {
+  padding: 0 7.8%;
+  height: 100vh;
+}
+body #wrap main #media .media_scroll {
+  height: 100%;
+  overflow-y: scroll;
   scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-body #wrap main .artist .artist_inner .artist_scroller::-webkit-scrollbar {
+body #wrap main #media .media_scroll::-webkit-scrollbar {
   display: none;
 }
-body #wrap main .brand_1 {
-  padding: 100px 7.8%;
+body #wrap main #media .brand_1 {
+  height: 40vh;
+  margin-top: 500px;
 }
-body #wrap main .brand_1 .brand_1_inner {
+body #wrap main #media .brand_1 .brand_1_inner {
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
   align-items: center;
 }
-body #wrap main .brand_1 .brand_1_inner .left_text_en {
+body #wrap main #media .brand_1 .brand_1_inner .left_text_en {
   display: flex;
   flex-flow: column nowrap;
   gap: 20px;
 }
-body #wrap main .brand_1 .brand_1_inner .left_text_en span {
+body #wrap main #media .brand_1 .brand_1_inner .left_text_en span {
   font-family: "Noto Serif", sans-serif;
   font-size: 42px;
   font-weight: 100;
   color: #fff;
 }
-body #wrap main .brand_1 .brand_1_inner .right_text_ko {
+body #wrap main #media .brand_1 .brand_1_inner .right_text_ko {
   display: flex;
   flex-flow: column nowrap;
   gap: 20px;
   align-items: end;
 }
-body #wrap main .brand_1 .brand_1_inner .right_text_ko span {
+body #wrap main #media .brand_1 .brand_1_inner .right_text_ko span {
   font-family: "Noto Sans KR", sans-serif;
   color: #fff;
   font-weight: 100;
   font-size: 40px;
 }
-body #wrap main .media {
-  padding: 100px 7.8%;
+body #wrap main #media .media_inner {
+  height: 100vh;
+}
+body #wrap main #media .media_inner .contents {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  gap: 30px;
+}
+body #wrap main #media .media_inner .contents .category {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  gap: 15px;
+  text-align: center;
+}
+body #wrap main #media .media_inner .contents .category li button {
+  color: #fff;
+  font-size: 17px;
+}
+body #wrap main #media .media_inner .contents .category::after, body #wrap main #media .media_inner .contents .category::before {
+  content: "";
+  display: block;
+  width: 125px;
+  height: 1px;
+  background-color: #333;
+}
+body #wrap main #media .media_inner .contents .media_contents .interview {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  gap: 30px;
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card {
+  overflow: hidden;
+  width: 450px;
+  height: 650px;
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card a img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+body #wrap main #media .media_inner .contents .media_contents .interview .interview_card:nth-child(1) a img {
+  transform: translate(5%, 50%) scale(2);
 }
 body #wrap main .brand_2 {
   padding: 100px 7.8%;
@@ -201,33 +292,33 @@ body #wrap main .brand_2 .brand_2_inner .sub .sub_text {
   color: #fff;
   font-size: 1.125rem;
 }
-body #wrap main .filmo {
+body #wrap main #filmo {
   padding: 100px 7.8%;
 }
-body #wrap main .filmo .filmo_inner .contents .posters {
+body #wrap main #filmo .filmo_inner .contents .posters {
   display: none;
 }
-body #wrap main .now {
+body #wrap main #now {
   padding: 100px 0;
 }
-body #wrap main .now .now_inner {
+body #wrap main #now .now_inner {
   margin: 0 auto;
   width: 100%;
 }
-body #wrap main .now .now_inner .contents {
+body #wrap main #now .now_inner .contents {
   padding: 100px 0;
   position: relative;
 }
-body #wrap main .now .now_inner .contents #now_swiper {
+body #wrap main #now .now_inner .contents #now_swiper {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
   overflow: visible;
 }
-body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper {
+body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper {
   align-items: center;
 }
-body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide {
+body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide {
   max-width: 280px;
   height: 400px;
   transition: transform 0.4s, opacity 0.4s, filter 0.4s;
@@ -235,24 +326,35 @@ body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper .swiper-sl
   transform: scale(1);
   filter: grayscale(100%);
 }
-body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide a {
+body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide a {
   display: block;
 }
-body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide a img {
+body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide a img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
-body #wrap main .now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide.swiper-slide-active {
+body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide.swiper-slide-active {
   opacity: 1;
   transform: scale(1.4);
   z-index: 90;
   filter: grayscale(0);
 }
-body #wrap main .now .now_inner .contents .swiper-button-next, body #wrap main .now .now_inner .contents .swiper-button-prev {
+body #wrap main #now .now_inner .contents .swiper-button-next, body #wrap main #now .now_inner .contents .swiper-button-prev {
   position: absolute;
   bottom: 0;
   right: 0;
+}
+@keyframes artistMore {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /*# sourceMappingURL=style.css.map */

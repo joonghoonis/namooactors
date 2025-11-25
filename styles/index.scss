@@ -1,141 +1,198 @@
-    @use './common.scss' as *;
-    @use './responsive.scss';
+@use './common.scss' as *;
+@use './responsive.scss';
 
-    html {
-        scroll-behavior: smooth;        // 부드러운 스크롤
-    }
-    body {
-        #wrap {
-            background: #060606;
-            header {   
-                position: fixed; top:0; z-index: 999;
-                padding:20px 30px;width:100%; opacity: 1;
-                transition: transform 0.6s ease,background-color 0.4s ease,opacity 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
-                transform: translateY(0);
+body {
+    #wrap {
+        #hero, #artist, #media, #filmo, #now, #audi {
+            height: 100%;box-sizing: border-box;
+        }
+        background: #060606;
+        header {   
+            position: fixed; top:0; z-index: 999;
+            padding:15px 30px 10px;width:100%; opacity: 1;
+            transition: transform 0.6s ease,background-color 0.4s ease,opacity 0.3s ease, padding 0.3s ease, box-shadow 0.3s ease;
+            transform: translateY(0);
+            .header_inner {
+                @include flex-row; gap: 50px;
+                align-items: center;
+                .logo {
+                    transition: transform .3s;
+                    svg {
+                        transform: scale(.8);
+                        path {
+                            transition: fill .5s ;
+                        }
+                    }
+                }
+                .nav {
+                    ul{
+                        @include flex-row; gap:35px;
+                        li {
+                            a {
+                                color:$color-white;
+                                transition:color 0.3s;
+                            }
+                        }
+                    }
+                }
+            }
+            &:hover {
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.08);
+                background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(2px);
                 .header_inner {
-                    @include flex-row; gap: 50px;
-                    align-items: center;
                     .logo {
-                        transition: transform .3s;
-                        svg {}
+                        svg {
+                            .tree_bottom{
+                                fill:#888
+                            }
+                            .tree_top{
+                                fill:#fff;
+                            }
+                        }
                     }
                     .nav {
-                        ul{
-                            @include flex-row; gap:30px;
+                        ul {
                             li {
                                 a {
-                                    color:$color-white;
-                                    transition:color 0.3s;
+                                    color:#000
                                 }
                             }
                         }
                     }
                 }
-                &.scrolled {
-                    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.08);
-                    background-color: rgba(255, 255, 255, 0.7); backdrop-filter: blur(1px);
-                    padding:5px 30px;
-                    .header_inner {
-                        .logo {
-                            transform: scale(.7);
+            }
+        }
+        main {
+            width: 100%;
+            height: 100vh; /* main의 높이를 뷰포트 높이로 설정 */
+            /* 공통 */
+            .section_title {
+                text-align: center;
+                margin:0 auto 30px;
+                .title {
+                    font-size: $font-size-28;
+                    color:$color-white; 
+                    margin-bottom: 10px;
+                }
+                .sub_title {
+                    font-size: $font-size-15;
+                    color:#999;
+                }
+
+            }
+            #hero {
+                @include bgset;
+                background-image: url(/images/main/main_bg.jpg);
+                position: relative;
+                .hero_inner {
+                    .main_t { 
+                        position: absolute;
+                        bottom: 38%;left:12%;color:$color-white;
+                        .main_t_40 {
+                            font-weight: 300;
+                            font-size: 40px; margin-bottom: 25px;
                         }
-                        .nav {
-                            ul {
-                                li {
-                                    a {
-                                        color:#222
+                        .main_t_80 {
+                            font-size: 80px; font-weight: 100;
+                            font-family: "Bad Script", sans-serif;
+                        }
+
+                    }
+                    .sub_t {
+                        font-size:$font-size-20; color:$color-white;
+                        position: absolute;
+                        bottom: 3%; right: 3%;
+                        font-family: "Noto Serif", sans-serif; font-weight: 200;
+                    }
+                }
+            }
+            #artist {
+                padding:100px 0 100px 7.8%;
+                position:relative;
+                height: 100vh;
+                overflow: hidden;
+                .artist_inner {
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    .artist_scroller {
+                        margin-top: 30px;
+                        flex: 1;
+                        width: 100%;  
+                        display: flex;
+                        align-items: center;   // 세로 가운데
+                        #artistSwiper {
+                            #first_card{
+                                transition:opacity 2s ease, transform 2s ease; ;
+                                transform: translateY(50px);
+                                &.is-visible {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                }
+                            }
+                            .artist_card {
+                                flex:0 0 auto;
+                                width: 450px;height:675px;
+                                transition: opacity 1s ease, transform 1s ease;
+                                opacity: 0;
+                                transform: translateY(50px);
+                                &.is-visible {
+                                    opacity: 1;
+                                    transform: translateY(0);
+                                    }
+                                .artist_figure {
+                                    max-width:450px;
+                                    img {
+                                        width: 100%; height: 100%; object-fit:cover;
+                                        filter: grayscale(100%);
+                                        transition: filter 0.5s ;
+                                    }
+                                } 
+                                &:hover {
+                                    .artist_figure {
+                                        img {
+                                            filter: grayscale(0);
+                                        }
                                     }
                                 }
                             }
+                            .artist_card.artist_more {
+                                width:200px;
+                                a {
+                                    @include flex-col; gap:5px;
+                                    align-items: center;
+                                    position: absolute;top:50%;
+                                    transform: translateY(-50%);
+                                }
+                                &:hover .plus {
+                                    animation: artistMore 0.75s ;
+                                }
+                                .label {
+                                    color:#fff;
+                                    font-size: 14px;
+                                    text-transform: uppercase;
+                                    letter-spacing: 0.08em;
+                                }
+
+                            }
                         }
                     }
-                    &:hover {
-                        background-color: rgba(255, 255, 255, 1);
-                    }
-                }
-                &.hide {
-                    transform: translateY(-30%);
-                    opacity: 0;
-                    pointer-events: none; // 헤더 안 눌리게. 필요 없으면 빼도 됨.
                 }
             }
-            main {
-                /* 공통 */
-                .section_title {
-                    text-align: center;
-                    margin:0 auto;
-                    .title {
-                        font-size: $font-size-28;
-                        color:$color-white; 
-                        margin-bottom: 10px;
-                    }
-                    .sub_title {
-                        font-size: $font-size-17;
-                        color:#999;
-                    }
-
-                }
-                .hero {
-                    width:100%;height:100vh;
-                    @include bgset;
-                    background-image: url(/images/main/main_bg.jpg);
-                    position: relative;
-                    .hero_inner {
-                        .main_t { 
-                            position: absolute;
-                            bottom: 38%;left:12%;color:$color-white;
-                            .main_t_40 {
-                                font-weight: 300;
-                                font-size: 40px; margin-bottom: 25px;
-                            }
-                            .main_t_80 {
-                                font-size: 80px; font-weight: 100;
-                                font-family: "Bad Script", sans-serif;
-                            }
-
-                        }
-                        .sub_t {
-                            font-size:$font-size-20; color:$color-white;
-                            position: absolute;
-                            bottom: 3%; right: 3%;
-                            font-family: "Noto Serif", sans-serif; font-weight: 200;
-                        }
-                    }
-                }
-                .artist {
-                    padding:100px 0 100px 7.8%; height: 100vh;
-                    .artist_inner {
-                        height: 100%;
-                        display: flex;
-                        flex-direction: column;
-                        .artist_scroller {
-                            margin-top: 30px;
-                            flex: 1;
-                            .artist_list {
-                                @include flex-row;
-                                gap:50px;
-                                .artist_card {
-                                    flex:0 0 450px;
-                                    .artist_figure {
-                                        max-width:450px;height:675px;
-                                        img {
-                                            width: 100%; height: 100%; object-fit:cover;
-                                        }
-                                    } 
-                                }
-                            }
-                            
-                            overflow-x: auto;
-                            overflow-y: hidden;
-                            scrollbar-width: none;         // Firefox
-                            &::-webkit-scrollbar {
-                                display: none;                 // Chrome, Safari 등
-                            }
-                        }
+            #media {
+                padding:0 7.8%;height: 100vh;
+                .media_scroll {
+                    height: 100%;     // = 100vh
+                    overflow-y: scroll;      // 스크롤 동작은 유지
+                    scrollbar-width: none;   // Firefox
+                    -ms-overflow-style: none; // IE/Edge
+                    
+                    &::-webkit-scrollbar {   // Chrome/Safari
+                        display: none;
                     }
                 }
                 .brand_1 {
-                    padding:100px 7.8%;
+                    height: 40vh; margin-top: 500px;
                     .brand_1_inner {
                         @include flex-row; justify-content: space-between; align-items: center;
                         .left_text_en {
@@ -154,79 +211,128 @@
                         }
                     }
                 }
-                .media {
-                    padding:100px 7.8%
-                }
-                .brand_2 {
-                    padding: 100px 7.8%;
-                    .brand_2_inner {
-                        .main {
-                            margin-bottom:30px;
-                            @include flex-col; @include flex-center; gap: 10px;
-                            h2 {
-                                color:$color-white;font-family: "Noto Serif",sans-serif;
-                                font-size: 38px; font-weight:200;
-                            }
-                        }
-                        .sub {
-                            .sub_text {
-                                text-align: center;font-weight: 200;line-height: $line-height-140;
-                                color:$color-white;font-size: $font-size-18;
-                            }
-                        }
-                    }
-                }
-                .filmo {
-                    padding:100px 7.8%;
-                    .filmo_inner {
-                        .contents {
-                            .view {}
-                            .posters {display: none;}
-                        }
-                    }
-                }
-                .now {
-                    padding: 100px 0;
-                    .now_inner {
-                        margin:0 auto;
-                        width: 100%;
-                        .contents {
-                            padding:100px 0;
-                            position:relative;
-                            #now_swiper {
-                                width: 100%;
-                                max-width: 100%;
-                                margin:0 auto;overflow: visible; 
-                                .swiper-wrapper {
-                                    align-items: center;
-                                    .swiper-slide {
-                                        max-width: 280px; height:400px;
-                                        transition: transform 0.4s, opacity 0.4s,filter 0.4s;
-                                        opacity: 0.9; 
-                                        transform: scale(1);
-                                        filter: grayscale(100%);
-                                        a {
-                                            display: block;
-                                            img {
-                                                width: 100%; height: 100%;object-fit: cover;
-                                            }
-                                        }
-                                    }
-                                    .swiper-slide.swiper-slide-active {
-                                        opacity: 1;
-                                        transform: scale(1.4); z-index: 90;
-                                        filter: grayscale(0);
-                                    }
+                .media_inner{
+                    height: 100vh;
+                    .contents {
+                        @include flex-row; justify-content:space-between; gap: 30px;
+                        .category {
+                            @include flex-col; justify-content:center ; gap:15px;text-align: center;
+                            li {
+                                button {
+                                    color:#fff;
+                                    font-size:17px;
                                 }
                             }
-                            .swiper-button-next,.swiper-button-prev {
-                                position: absolute; bottom: 0; right: 0;
+                            &::after,&::before {
+                                content: ''; display: block; width: 125px;height: 1px;
+                                background-color: #333;
                             }
+                        }
+                    .media_contents {
+                        .interview {
+                            @include flex-row; justify-content: center; gap: 30px;
+
+                            .interview_card {
+                                overflow: hidden;
+                                width: 450px; height: 650px;
+                                a {
+                                    img {
+                                        width: 100%; height: 100%; object-fit: cover;
+                                    }
+                                }
+                                &:nth-child(1){
+                                    a img {transform: translate(5%, 50%) scale(2);}
+                                }
+                            }
+                        }
+                        .news {}
+                        .scense {}
+                        .photo {}
                         }
                     }
                 }
-                .audi {}
             }
-            footer {}
+            .brand_2 {
+                padding: 100px 7.8%;
+                .brand_2_inner {
+                    .main {
+                        margin-bottom:30px;
+                        @include flex-col; @include flex-center; gap: 10px;
+                        h2 {
+                            color:$color-white;font-family: "Noto Serif",sans-serif;
+                            font-size: 38px; font-weight:200;
+                        }
+                    }
+                    .sub {
+                        .sub_text {
+                            text-align: center;font-weight: 200;line-height: $line-height-140;
+                            color:$color-white;font-size: $font-size-18;
+                        }
+                    }
+                }
+            }
+            #filmo {
+                padding:100px 7.8%;
+                .filmo_inner {
+                    .contents {
+                        .view {}
+                        .posters {display: none;}
+                    }
+                }
+            }
+            #now {
+                padding: 100px 0;
+                .now_inner {
+                    margin:0 auto;
+                    width: 100%;
+                    .contents {
+                        padding:100px 0;
+                        position:relative;
+                        #now_swiper {
+                            width: 100%;
+                            max-width: 100%;
+                            margin:0 auto;overflow: visible; 
+                            .swiper-wrapper {
+                                align-items: center;
+                                .swiper-slide {
+                                    max-width: 280px; height:400px;
+                                    transition: transform 0.4s, opacity 0.4s,filter 0.4s;
+                                    opacity: 0.9; 
+                                    transform: scale(1);
+                                    filter: grayscale(100%);
+                                    a {
+                                        display: block;
+                                        img {
+                                            width: 100%; height: 100%;object-fit: cover;
+                                        }
+                                    }
+                                }
+                                .swiper-slide.swiper-slide-active {
+                                    opacity: 1;
+                                    transform: scale(1.4); z-index: 90;
+                                    filter: grayscale(0);
+                                }
+                            }
+                        }
+                        .swiper-button-next,.swiper-button-prev {
+                            position: absolute; bottom: 0; right: 0;
+                        }
+                    }
+                }
+            }
+            #audi {}
         }
+        footer {}
     }
+}
+@keyframes artistMore {
+    0% {
+        transform: translateY(0)
+    }
+    50% {
+        transform : translateY(-10px)
+    }
+    100% {
+        transform: translateY(0)
+    }
+}
