@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (progress <= 0) return 0;
 
         // 카드별 등장 시점 (점점 텀 길어지는 구조)
-        const t2 = 0.10; // 2번
+        const t2 = 0.08; // 2번
         const t3 = 0.20; // 3번
         const t4 = 0.40; // 4번
         const t5 = 0.62; // 5번
@@ -200,6 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 setupMediaScrollSequence(mainSwiper);
+setupFilmoScrollSequence(mainSwiper);
+setupAudiScroll(mainSwiper);
 });
 /* ===============미디어 카테고리===================== */
   const mediaCategoryItems = document.querySelectorAll('#media .category li');
@@ -369,40 +371,57 @@ mainSwiper.on('slideChangeTransitionEnd', (swiper) => {
             return;
         }
 
-        // =========================
-        // 1) 인트로 연출 구간 (step 0~3)
-        //   - 이때는 항상 scrollTop = 0 근처라고 가정
-        // =========================
-        if (step < 4) {
-            e.preventDefault();
-            e.stopPropagation();
+       // =========================
+// 1) 인트로 연출 구간 (step 0~3)
+//   - 이때는 항상 scrollTop = 0 근처라고 가정
+// =========================
+if (step < 4) {
+    e.preventDefault();
+    e.stopPropagation();
 
-            if (dy > 0) {
-                // 아래로 → 0→1→2→3→4
-                if (step < 4) {
-                    step++;
-                    applyStep();
-                    if (step === 4) {
-                        sequenceCompleted = true;
-                    }
-                }
-            } else if (dy < 0) {
-                // 위로 → 3→2→1→0
-                if (step > 0) {
-                    step--;
-                    applyStep();
-                    if (step === 0) {
-                        sequenceCompleted = false;
-                    }
-                } else {
-                    // step 0에서 위로 → 이전 섹션으로 (artist)
-                    isVerticalSliding = true;
-                    if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
-                    mainSwiper.slidePrev();
-                }
+    if (dy > 0) {
+        // 아래로 → 0→1→2→3→4
+        if (step < 4) {
+            step++;
+            applyStep();
+            if (step === 4) {
+                sequenceCompleted = true;
             }
+        }
+    } else if (dy < 0) {
+        // ===== 위로 스크롤 (단계 되감기 / 이전 섹션) =====
+
+        // 3,2일 때는 단계만 줄이기 (3→2, 2→1)
+        if (step > 1) {
+            step -= 1;
+            applyStep();
             return;
         }
+
+        // step === 1 (text1만 보이는 상태)
+        // → text1을 사라지게 만들고, 동시에 이전 섹션(artist)로 이동
+        if (step === 1) {
+            step = 0;
+            sequenceCompleted = false;   // 인트로 모드로 복귀
+            applyStep();                 // text1 숨김 (페이드아웃 시작)
+
+            isVerticalSliding = true;
+            if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
+            mainSwiper.slidePrev();
+            return;
+        }
+
+        // step === 0인 상태에서 위로 → 바로 artist로
+        if (step === 0) {
+            isVerticalSliding = true;
+            if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
+            mainSwiper.slidePrev();
+            return;
+        }
+    }
+    return;
+}
+
 
         // =========================
         // 2) 실제 스크롤 + 역재생 구간 (step >= 4)
@@ -437,3 +456,394 @@ mainSwiper.on('slideChangeTransitionEnd', (swiper) => {
         e.stopPropagation();
     }, { passive: false });
 }
+/* =======================filmography===================== */
+// =======================================================
+// JS FUNCTION - 필모그래피 콘텐츠 업데이트 (유지)
+// =======================================================
+function updateFilmography(year) {
+    const allViews = document.querySelectorAll('.filmo_inner .contents .view');
+    allViews.forEach(view => {
+        view.classList.remove('active');
+    });
+
+    const targetView = document.querySelector(`.filmo_inner .contents .view[data-year="${year}"]`);
+    if (targetView) {
+        targetView.classList.add('active');
+    }
+}
+
+// ❌ updateFadeClasses 함수는 이제 필요 없으므로 제거됩니다.
+// =======================================================
+// DOM CONTENT LOADED
+// =======================================================
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Swiper === 'undefined') {
+        console.error('Swiper library is not loaded. Please ensure you have included the Swiper JS file.');
+        return;
+    }
+    
+    // 1. Swiper 초기화 (최종 설정 유지)
+    const yearsSwiper = new Swiper('.years_list.swiper', {
+        direction: 'vertical',         
+        slidesPerView: 'auto',              
+        centeredSlides: true,          
+        spaceBetween: 7, 
+        
+        // 드래그 기능 제거 유지
+        touchRatio: 0, 
+        grabCursor: false, 
+        
+        speed: 300, 
+        resistanceRatio: 0, 
+        setWrapperSize: true, 
+        
+        // 마우스 휠 스크롤 설정 유지
+        mousewheel: {
+            enabled: true,
+            eventTarget: '.years_list.swiper', 
+            releaseOnEdges: false,       
+            forceToAxis: true,           
+            sensitivity: 1.0, 
+        },
+        
+        nested: true,                   
+        loop: false,
+    });
+
+// 2. Swiper 슬라이드 이동 중 이벤트 처리 (Progress 기반 투명도 계산)
+yearsSwiper.on('setTranslate', function () {
+    const swiper = this;
+    
+    for (let i = 0; i < swiper.slides.length; i++) {
+        const slide = swiper.slides[i];
+        const slideButton = slide.querySelector('button');
+        
+        // 중앙으로부터 얼마나 떨어져 있는지 나타내는 값 (중앙일 때 0, 다음 슬라이드일 때 1, 2칸 떨어졌을 때 2)
+        let absProgress = Math.abs(swiper.slides[i].progress); 
+        let opacity;
+        
+        if (absProgress < 1) {
+            // P=0 (Active) → P=1 (Next/Prev) : 1.0에서 0.6으로 부드럽게 감소
+            // (1.0 - 0.4)
+            opacity = 1.0 - (absProgress * 0.4); 
+        } else if (absProgress < 2) {
+            // P=1 → P=2 (Next/Prev-2) : 0.6에서 0.4로 부드럽게 감소
+            // (0.6 - 0.2)
+            let fractionalProgress = absProgress - 1; // P=1에서 시작 (0 ~ 1 사이 값)
+            opacity = 0.6 - (fractionalProgress * 0.2); 
+        } else if (absProgress < 3) {
+            // P=2 → P=3 : 0.4에서 0.2로 부드럽게 감소
+            // (0.4 - 0.2)
+            let fractionalProgress = absProgress - 2; // P=2에서 시작 (0 ~ 1 사이 값)
+            opacity = 0.4 - (fractionalProgress * 0.2);
+        } else {
+            // P=3 이상: 최소 투명도 0.2로 고정
+            opacity = 0.2;
+        }
+
+        // 최종적으로 opacity 값을 슬라이드 버튼에 인라인 스타일로 적용
+        if (slideButton) {
+             slideButton.style.opacity = opacity;
+             
+             // 활성화된 슬라이드는 항상 #fff 색상을 유지하도록 CSS로 처리
+             if (!slide.classList.contains('swiper-slide-active')) {
+                 slideButton.style.color = `rgba(255, 255, 255, ${opacity * 0.9 + 0.1})`;
+             }
+        }
+    }
+});
+// ... (나머지 JS 코드 유지)
+    // 3. Swiper 슬라이드 변경 완료 이벤트 처리 (컨텐츠 업데이트용)
+    yearsSwiper.on('slideChangeTransitionEnd', function () {
+        const activeSlide = yearsSwiper.slides[yearsSwiper.activeIndex];
+        const button = activeSlide.querySelector('button');
+        if (button) {
+            const currentYear = button.dataset.year;
+            updateFilmography(currentYear);
+        }
+        // ✅ 클래스 기반이 아니므로 updateFadeClasses 호출 제거
+        // 하지만 투명도 계산은 setTranslate에서 지속적으로 이루어짐
+    });
+
+    // 4. 연도 버튼 클릭 이벤트 처리 (유지)
+    const yearButtons = document.querySelectorAll('.filmo_years button');
+    yearButtons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault(); 
+            const clickedYear = event.currentTarget.dataset.year;
+            
+            let targetIndex = -1;
+            const slides = yearsSwiper.slides;
+            
+            for (let i = 0; i < slides.length; i++) {
+                const slideButton = slides[i].querySelector('button');
+                if (slideButton && slideButton.dataset.year === clickedYear) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+
+            if (targetIndex !== -1) {
+                yearsSwiper.slideTo(targetIndex);
+                updateFilmography(clickedYear);
+                // 클릭 시에도 클래스 기반이 아니므로 updateFadeClasses 호출 제거
+            }
+        });
+    });
+
+    // 5. 상위 섹션 넘어가는 문제 해결 로직 (유지)
+    const swiperContainer = document.querySelector('.years_list.swiper');
+    if (swiperContainer) {
+        swiperContainer.addEventListener('wheel', (event) => {
+            event.stopPropagation();
+        }, { passive: false }); 
+    }
+    
+    // 초기 로드 시
+    const initialButton = yearsSwiper.slides[yearsSwiper.activeIndex].querySelector('button');
+    if (initialButton) {
+        updateFilmography(initialButton.dataset.year);
+    }
+    
+    // ✅ 초기 로드 시 수동으로 setTranslate 이벤트 트리거
+    yearsSwiper.emit('setTranslate');
+});
+/* ====================swiper poster=========================== */
+
+const posterSwiper = new Swiper("#posters", {
+    effect: "cube",
+    grabCursor: true,
+    autoplay: {
+        delay: 1800
+    },
+    loop:true,
+    speed:1200,
+    cubeEffect: {
+      shadow: true,
+      slideShadows: true,
+      shadowOffset: 20,
+      shadowScale: 0.94,
+    },
+    pagination: {
+      el: "#posters .swiper-pagination",
+    },
+  });
+/* =================filmography fadein================= */
+function setupFilmoScrollSequence(mainSwiper) {
+    const FILMO_INDEX = 3; // hero=0, artist=1, media=2, filmo=3
+
+    const filmoSlide = document.querySelector('#filmo');
+    if (!filmoSlide) return;
+
+    const brand = filmoSlide.querySelector('.brand_2');
+    const filmoInner = filmoSlide.querySelector('.filmo_inner');
+
+    if (!brand || !filmoInner) return;
+
+    // step:
+    // 0: 모두 숨김
+    // 1: brand_2 main만 보임
+    // 2: brand_2 main + sub 보임
+    // 3: brand_2 숨김 + filmo_inner 보임
+    let step = 0;
+
+    function applyStep() {
+        // 클래스 리셋
+        brand.classList.remove('step-main', 'step-sub', 'step-hidden');
+        filmoInner.classList.remove('filmo-visible');
+
+        if (step === 1) {
+            brand.classList.add('step-main');
+        } else if (step === 2) {
+            brand.classList.add('step-sub');
+        } else if (step >= 3) {
+            brand.classList.add('step-hidden');
+            filmoInner.classList.add('filmo-visible');
+        }
+        // step 0은 기본값 (brand 투명, filmo_inner 숨김 + pointer-events:none)
+    }
+
+    function enterFromTop() {
+        // media → filmo 내려올 때
+        step = 1;         // main 바로 페이드인
+        applyStep();
+    }
+
+    function enterFromBottom() {
+        // now → filmo 위에서 올라올 때
+        // 인트로는 이미 끝난 상태로 보고 바로 contents만 노출
+        step = 3;
+        applyStep();
+    }
+
+    // 슬라이드 이동 방향에 따라 초기 상태 세팅
+    mainSwiper.on('slideChangeTransitionStart', (swiper) => {
+        const prev = swiper.previousIndex;
+        const curr = swiper.activeIndex;
+
+        // 위에서 filmo로 내려올 때 (media → filmo)
+        if (curr === FILMO_INDEX && prev < FILMO_INDEX) {
+            step = 0;      // 일단 초기화
+            applyStep();
+        }
+
+        // 아래에서 filmo로 올라올 때 (now → filmo)
+        if (curr === FILMO_INDEX && prev > FILMO_INDEX) {
+            enterFromBottom();
+        }
+    });
+
+    mainSwiper.on('slideChangeTransitionEnd', (swiper) => {
+        const prev = swiper.previousIndex;
+        const curr = swiper.activeIndex;
+
+        // media → filmo 도착 "직후": main 자동 페이드인
+        if (curr === FILMO_INDEX && prev < FILMO_INDEX) {
+            enterFromTop();
+        }
+    });
+
+    // 혹시 처음부터 filmo에서 시작하는 경우 대비
+    applyStep();
+
+    // ====================== 휠 이벤트로 단계 제어 ======================
+    filmoSlide.addEventListener('wheel', (e) => {
+        if (mainSwiper.activeIndex !== FILMO_INDEX) return;
+
+        const dy = e.deltaY;
+
+        // 다른 섹션으로 슬라이드 중이면 막기
+        if (isVerticalSliding) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        // ===== 아래로 스크롤 (다음 단계 / 다음 섹션) =====
+        if (dy > 0) {
+            // step 1(main) → 2(main+sub) → 3(contents)
+            if (step < 3) {
+                e.preventDefault();
+                e.stopPropagation();
+                step += 1;           // 1→2, 2→3
+                applyStep();
+                return;
+            } else {
+                // step === 3 : filmo_inner 이미 나와 있음
+                // → 여기부터는 Swiper 기본 동작에 맡겨서 다음 섹션(now)로 이동
+                // (preventDefault / stopPropagation 안 함)
+                return;
+            }
+        }
+
+// ===== 위로 스크롤 (단계 되감기 / 이전 섹션) =====
+if (dy < 0) {
+    // contents가 떠있는 상태(step 3)에서 위로 → brand_2 (sub까지) 상태로
+    if (step > 1) {
+        // 3→2, 2→1
+        e.preventDefault();
+        e.stopPropagation();
+        step -= 1;
+        applyStep();
+        return;
+    }
+
+    // step === 1 (main만 남았을 때)
+    // → main을 먼저 페이드아웃시키고, 동시에 이전 섹션으로 슬라이드
+    if (step === 1) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // 🔹 여기서 main(brand_2) 먼저 사라지게
+        step = 0;
+        applyStep();   // brand_2 opacity 0으로 전환 (transition으로 페이드아웃)
+
+        // 그리고 곧바로 이전 섹션으로 이동
+        isVerticalSliding = true;
+        if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
+        mainSwiper.slidePrev();
+        return;
+    }
+
+    // 안전빵: step 0 상태에서 위로 → 바로 이전 섹션
+    if (step === 0) {
+        e.preventDefault();
+        e.stopPropagation();
+        isVerticalSliding = true;
+        if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
+        mainSwiper.slidePrev();
+        return;
+    }
+}
+
+
+        e.preventDefault();
+        e.stopPropagation();
+    }, { passive: false });
+}
+
+/* ================audition 내부스크롤 ======================= */
+function setupAudiScroll(mainSwiper) {
+    // hero=0, artist=1, media=2, filmo=3, now=4, audi=5
+    const AUDI_INDEX = 5;
+
+    const audiSlide = document.querySelector('#audi');
+    if (!audiSlide) return;
+
+    const audiScroll = audiSlide.querySelector('.audi_scroll');
+    if (!audiScroll) return;
+
+    audiScroll.addEventListener('wheel', (e) => {
+        // 다른 슬라이드에 있을 때는 관여 X
+        if (mainSwiper.activeIndex !== AUDI_INDEX) return;
+
+        const dy = e.deltaY;
+        const el = e.currentTarget;
+
+        const atTop = el.scrollTop <= 0;
+        const atBottom =
+            el.scrollHeight - el.clientHeight - el.scrollTop <= 1;
+
+        // 메인 세로 슬라이드 중이면 전부 막기
+        if (isVerticalSliding) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        // ===================== 아래로 스크롤 =====================
+        if (dy > 0) {
+            if (!atBottom) {
+                // 내부에 아직 스크롤 여유 있으면 → 내부만 스크롤, Swiper로는 안 보냄
+                e.stopPropagation();
+                return;
+            }
+            // 맨 아래에서 더 내려도 Swiper로 이벤트 안 넘기고 그냥 막아버림
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+
+        // ===================== 위로 스크롤 =====================
+        if (dy < 0) {
+            if (!atTop) {
+                // 내부에서만 위로 올라가게
+                e.stopPropagation();
+                return;
+            }
+
+            // 맨 위에서 위로 한 번 더 → 이전 섹션(#now)로 이동
+            e.preventDefault();
+            e.stopPropagation();
+
+            isVerticalSliding = true;
+            if (mainSwiper.mousewheel) mainSwiper.mousewheel.disable();
+            mainSwiper.slidePrev();
+            return;
+        }
+    }, { passive: false });
+}
+/* ============================= now swiper ==================================== */
+const nowSwiper = new Swiper('#now #now_swiper', {
+    
+})

@@ -1,4 +1,9 @@
 @charset "UTF-8";
+html, body {
+  position: relative;
+  height: 100%;
+}
+
 body #wrap #hero, body #wrap #artist, body #wrap #media, body #wrap #filmo, body #wrap #now, body #wrap #audi {
   height: 100%;
   box-sizing: border-box;
@@ -116,7 +121,6 @@ body #wrap main #artist .artist_inner {
   flex-direction: column;
 }
 body #wrap main #artist .artist_inner .artist_scroller {
-  margin-top: 30px;
   flex: 1;
   width: 100%;
   display: flex;
@@ -355,10 +359,20 @@ body #wrap main #media .media_inner .contents .media_contents > div.is-active {
   opacity: 1;
   pointer-events: auto;
 }
-body #wrap main .brand_2 {
-  padding: 100px 7.8%;
+body #wrap main #filmo {
+  position: relative;
 }
-body #wrap main .brand_2 .brand_2_inner .main {
+body #wrap main #filmo .brand_2 {
+  padding: 100px 7.8%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  top: 20%;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+body #wrap main #filmo .brand_2 .brand_2_inner .main {
   margin-bottom: 30px;
   display: flex;
   flex-flow: column nowrap;
@@ -366,24 +380,190 @@ body #wrap main .brand_2 .brand_2_inner .main {
   align-items: center;
   gap: 10px;
 }
-body #wrap main .brand_2 .brand_2_inner .main h2 {
+body #wrap main #filmo .brand_2 .brand_2_inner .main svg {
+  transform: scale(1.3);
+}
+body #wrap main #filmo .brand_2 .brand_2_inner .main h2 {
   color: #fff;
   font-family: "Noto Serif", sans-serif;
-  font-size: 38px;
+  font-size: 52px;
   font-weight: 200;
 }
-body #wrap main .brand_2 .brand_2_inner .sub .sub_text {
+body #wrap main #filmo .brand_2 .brand_2_inner .sub .sub_text {
   text-align: center;
   font-weight: 200;
-  line-height: 140%;
+  line-height: 150%;
   color: #fff;
-  font-size: 1.125rem;
+  font-size: 23px;
+  white-space: nowrap;
+}
+body #wrap main #filmo .brand_2 .brand_2_inner .sub .sub_text em {
+  font-weight: 300;
+}
+body #wrap main #filmo .brand_2 .main,
+body #wrap main #filmo .brand_2 .sub {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+body #wrap main #filmo .brand_2.step-main {
+  opacity: 1;
+  pointer-events: auto;
+}
+body #wrap main #filmo .brand_2.step-main .main {
+  opacity: 1;
+  transform: translateY(0);
+}
+body #wrap main #filmo .brand_2.step-sub {
+  opacity: 1;
+  pointer-events: auto;
+}
+body #wrap main #filmo .brand_2.step-sub .main,
+body #wrap main #filmo .brand_2.step-sub .sub {
+  opacity: 1;
+  transform: translateY(0);
+}
+body #wrap main #filmo .brand_2.step-hidden {
+  opacity: 0;
+  pointer-events: none;
 }
 body #wrap main #filmo {
   padding: 100px 7.8%;
 }
-body #wrap main #filmo .filmo_inner .contents .posters {
-  display: none;
+body #wrap main #filmo .filmo_inner {
+  height: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+body #wrap main #filmo .filmo_inner.filmo-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+body #wrap main #filmo .filmo_inner .contents {
+  height: 80%;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 150px;
+}
+body #wrap main #filmo .filmo_inner .contents .view {
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  align-items: center;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  gap: 70px;
+}
+body #wrap main #filmo .filmo_inner .contents .view.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+body #wrap main #filmo .filmo_inner .contents .view #posters {
+  width: 440px;
+  height: 655px;
+  position: absolute;
+  left: 15%;
+  top: 33%;
+  margin-left: -150px;
+  margin-top: -150px;
+}
+body #wrap main #filmo .filmo_inner .contents .view #posters .swiper-wrapper .swiper-slide.poster_card {
+  background-position: center;
+  background-size: cover;
+}
+body #wrap main #filmo .filmo_inner .contents .view #posters .swiper-wrapper .swiper-slide.poster_card img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+body #wrap main #filmo .filmo_inner .contents .view #posters .swiper-wrapper .swiper-pagination {
+  bottom: 50px;
+  background-color: #ddd;
+}
+body #wrap main #filmo .filmo_inner .contents .view #posters .swiper-wrapper .swiper-pagination .swiper-pagination-bullet {
+  background-color: #fff;
+}
+body #wrap main #filmo .filmo_inner .contents .view .filmo_list {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+body #wrap main #filmo .filmo_inner .contents .view .filmo_list ul {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 23px;
+}
+body #wrap main #filmo .filmo_inner .contents .view .filmo_list ul .text {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 300;
+}
+body #wrap main #filmo .filmo_inner .contents .view .filmo_list ul .text em {
+  font-weight: 400;
+}
+body #wrap main #filmo .filmo_inner .contents .view .filmo_list ul .line {
+  width: 100%;
+  height: 1px;
+  background: #333;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years {
+  position: relative;
+  padding: 10px 25px;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper {
+  width: 100px;
+  height: 155px;
+  overflow: hidden;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 13px;
+  text-align: center;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide {
+  height: auto;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide button {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 20px;
+  opacity: 0.3 !important;
+  transition: color 0.3s, opacity 0.3s;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide.swiper-slide-active button {
+  color: #fff !important;
+  opacity: 1 !important;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide.swiper-slide-prev button, body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide.swiper-slide-next button {
+  color: rgba(255, 255, 255, 0.6) !important;
+  opacity: 0.6 !important;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide.swiper-slide-prev-2 button, body #wrap main #filmo .filmo_inner .contents .filmo_years .years_list.swiper .swiper-wrapper .swiper-slide.swiper-slide-next-2 button {
+  color: rgba(255, 255, 255, 0.4) !important;
+  opacity: 0.4 !important;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years::after, body #wrap main #filmo .filmo_inner .contents .filmo_years::before {
+  content: "";
+  display: block;
+  width: 100px;
+  height: 1px;
+  background-color: #333;
+  right: 50%;
+  transform: translateX(50%);
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years::after {
+  position: absolute;
+  top: -3px;
+}
+body #wrap main #filmo .filmo_inner .contents .filmo_years::before {
+  position: absolute;
+  bottom: -3px;
 }
 body #wrap main #now {
   padding: 100px 0;
@@ -432,6 +612,159 @@ body #wrap main #now .now_inner .contents .swiper-button-next, body #wrap main #
   bottom: 0;
   right: 0;
 }
+body #wrap main #audi {
+  height: 100vh;
+}
+body #wrap main #audi .audi_scroll {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+}
+body #wrap main #audi .audi_scroll .section_title {
+  margin-top: 100px;
+}
+body #wrap main #audi .audi_scroll .audi_inner {
+  margin-bottom: 50px;
+  padding: 0 7.8%;
+  position: relative;
+  z-index: 1;
+  height: 70%;
+  background-image: url(../images/audition/audition_bg.png);
+  background-repeat: no-repeat;
+  background-size: cover; /* or contain */
+  background-position: center;
+}
+body #wrap main #audi .audi_scroll .audi_inner::before {
+  content: ""; /* 가상 요소는 content 속성이 필수입니다. */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents {
+  padding: 80px 0;
+  height: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .audi_title {
+  text-align: center;
+  font-size: 22px;
+  color: #fff;
+  font-weight: 400;
+  margin-bottom: 50px;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .procedure ul {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  gap: 15px;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .procedure ul .audi_border {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 140px;
+  height: 140px;
+  line-height: 140%;
+  border: 2px solid #fff;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 20px;
+  color: #fff;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .info .audi_info_wrap {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 13px;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .info .audi_info_wrap .audi_row {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 20px;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .info .audi_info_wrap .audi_row dt, body #wrap main #audi .audi_scroll .audi_inner .contents .left_contents .info .audi_info_wrap .audi_row dd {
+  color: #fff;
+  font-size: 17px;
+  font-weight: 300;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents {
+  display: flex;
+  align-items: end;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents .supporting {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 50px;
+  align-items: end;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents .supporting h2 {
+  font-size: 38px;
+  color: #fff;
+  font-weight: 200;
+  font-family: "Noto Serif", sans-serif;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents .supporting p {
+  color: #fff;
+  text-align: end;
+  line-height: 170%;
+  font-size: 24px;
+  font-weight: 300;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents .supporting p em {
+  font-size: 34px;
+  font-weight: 400;
+}
+body #wrap main #audi .audi_scroll .audi_inner .contents .right_contents .supporting a {
+  padding: 10px 22px;
+  border: 1px solid #fff;
+  color: #fff;
+  border-radius: 20px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+body #wrap main #audi .audi_scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+body #wrap main #audi .audi_scroll::-webkit-scrollbar {
+  display: none;
+}
+body #wrap footer .footer_inner {
+  padding: 70px 150px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+body #wrap footer .footer_inner .left {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 20px;
+}
+body #wrap footer .footer_inner .left .info {
+  color: #999;
+  font-size: 14px;
+  line-height: 130%;
+}
+body #wrap footer .footer_inner .left .copy {
+  color: #999;
+  font-size: 12px;
+}
+body #wrap footer .footer_inner .right svg {
+  transform: scale(1.3);
+}
+
 @keyframes artistMore {
   0% {
     transform: translateY(0);

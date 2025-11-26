@@ -1,6 +1,9 @@
 @use './common.scss' as *;
 @use './responsive.scss';
-
+html,body {
+    position: relative;
+    height: 100%;
+}
 body {
     #wrap {
         #hero, #artist, #media, #filmo, #now, #audi {
@@ -116,7 +119,6 @@ body {
                     display: flex;
                     flex-direction: column;
                     .artist_scroller {
-                        margin-top: 30px;
                         flex: 1;
                         width: 100%;  
                         display: flex;
@@ -324,31 +326,177 @@ body {
                     }
                 }
             }
-            .brand_2 {
-                padding: 100px 7.8%;
-                .brand_2_inner {
-                    .main {
-                        margin-bottom:30px;
-                        @include flex-col; @include flex-center; gap: 10px;
-                        h2 {
-                            color:$color-white;font-family: "Noto Serif",sans-serif;
-                            font-size: 38px; font-weight:200;
+            #filmo {
+                position: relative;
+                .brand_2 {
+                    padding: 100px 7.8%; opacity: 0;
+                    pointer-events: none;transition: opacity 0.5s ease;
+                    top:20%;
+                    position: absolute; left:50%;transform:translateX(-50%);
+                    .brand_2_inner {
+                        .main {
+                            margin-bottom:30px;
+                            @include flex-col; @include flex-center; gap: 10px;
+                            svg {
+                                transform: scale(1.3);
+                            }
+                            h2 {
+                                color:$color-white;font-family: "Noto Serif",sans-serif;
+                                font-size: 52px; font-weight:200;
+                            }
+                        }
+                        .sub {
+                            .sub_text {
+                                text-align: center;font-weight: 200;line-height:150%;
+                                color:$color-white;font-size:23px;white-space: nowrap;
+                                em {
+                                    font-weight:300;
+                                }
+                            }
                         }
                     }
+                    .main,
                     .sub {
-                        .sub_text {
-                            text-align: center;font-weight: 200;line-height: $line-height-140;
-                            color:$color-white;font-size: $font-size-18;
+                        opacity: 0;
+                        transform: translateY(15px);
+                        transition: opacity 0.5s ease, transform 0.5s ease;
+                    }
+                    // step 1: main만 페이드인
+                    &.step-main {
+                        opacity: 1;
+                        pointer-events: auto;
+                        .main {
+                            opacity: 1;
+                            transform: translateY(0);
                         }
+                    }           
+                    // step 2: main + sub 페이드인
+                    &.step-sub {
+                        opacity: 1;
+                        pointer-events: auto;
+                        .main,
+                        .sub {
+                            opacity: 1;
+                            transform: translateY(0);
+                        }
+                    }
+                    &.step-hidden {
+                        opacity: 0;
+                        pointer-events: none;
                     }
                 }
-            }
-            #filmo {
                 padding:100px 7.8%;
                 .filmo_inner {
+                    height: 100%;
+                    opacity: 0;
+                    transform: translateY(20px);
+                    transition: opacity 0.5s ease, transform 0.5s ease;
+                    pointer-events: none; 
+                    &.filmo-visible {
+                        opacity: 1;
+                        transform: translateY(0);
+                        pointer-events: auto;
+                    }
                     .contents {
-                        .view {}
-                        .posters {display: none;}
+                        height: 80%;
+                        @include flex-row; align-items: center; justify-content:space-between;
+                        gap:150px;
+                        .view {
+                            width: 100%;
+                            opacity: 0;
+                            transition: opacity 0.3s;
+                            pointer-events: none;     align-items: center;
+                            @include flex-row;justify-content: space-between;
+                            gap:70px;
+                            &.active {
+                                opacity: 1;
+                                pointer-events: auto;
+                            }
+                            #posters {
+                                width: 440px;
+                                height: 655px;
+                                position: absolute;
+                                left: 15%;
+                                top: 33%;
+                                margin-left: -150px;
+                                margin-top: -150px;
+                                .swiper-wrapper{
+                                    .swiper-slide.poster_card {
+                                        background-position: center;
+                                        background-size: cover;
+                                        img {width: 100%;height: auto;display: block;}
+                                    }
+                                    .swiper-pagination {
+                                        bottom: 50px;
+                                        background-color: #ddd;
+                                        .swiper-pagination-bullet {
+                                            background-color: #fff;
+                                        }
+                                    }
+                                }
+                            }
+                            .filmo_list {
+                                width:100%;
+                                display: flex; align-items: center;justify-content: end;
+                                ul {
+                                    @include flex-col; gap:23px;
+                                    .text {
+                                        color:#fff ;font-size: 18px;font-weight: 300;
+                                        em {
+                                            font-weight: 400;
+                                        }
+                                    }
+                                    .line {
+                                        width :100%; height: 1px;
+                                        background: #333;
+                                    }
+                                }
+                            }
+                        }
+                        .filmo_years {
+                            position: relative;
+                            padding:10px 25px; 
+                            .years_list.swiper { 
+                                width: 100px;
+                                height: 155px; overflow: hidden;
+                                @include flex-col; gap: 13px; text-align: center;
+                                .swiper-wrapper {
+                                    .swiper-slide {
+                                        height: auto;
+                                        button {
+                                            color: rgba(255, 255, 255, 0.4) !important;
+                                            font-size: 20px;opacity: 0.3 !important;
+                                            transition: color 0.3s,opacity 0.3s;
+                                        }
+                                        &.swiper-slide-active button {
+                                            color: #fff  !important   ; // 흰색으로 강조
+                                            opacity: 1 !important;
+                                        }
+                                        &.swiper-slide-prev button,
+                                        &.swiper-slide-next button {
+                                            color: rgba(255, 255, 255, 0.6) !important; // 중간 밝기 (예: 60%)
+                                            opacity: 0.6 !important;
+                                            
+                                        }
+                                        &.swiper-slide-prev-2 button,
+                                        &.swiper-slide-next-2 button {
+                                            color: rgba(255, 255, 255, 0.4) !important; // 더 어둡게 (예: 40%)
+                                            opacity: 0.4 !important;
+                                        }
+                                    }
+                                }
+                            }
+                            &::after,&::before {
+                                content: ''; display: block; width: 100px;height: 1px;
+                                background-color: #333;right: 50%; transform:translateX(50%)
+                            }
+                            &::after {
+                                position: absolute; top:-3px;
+                            }
+                            &::before {
+                                position: absolute; bottom:-3px;
+                            }
+                        }
                     }
                 }
             }
@@ -392,9 +540,104 @@ body {
                     }
                 }
             }
-            #audi {}
+            #audi {
+                height: 100vh;
+                .audi_scroll{
+                    width: 100%; height: 100vh; overflow-y: auto;
+                    .section_title {
+                        margin-top: 100px;
+                    }
+                    .audi_inner{margin-bottom: 50px;
+                        padding:0 7.8%;position: relative; 
+                        z-index: 1; height: 70%; 
+                        background-image: url(../images/audition/audition_bg.png);
+                        @include bgset;
+                        &::before {
+                            content: ""; /* 가상 요소는 content 속성이 필수입니다. */
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: rgba(0, 0, 0, 0.5); 
+                            z-index: -1; 
+                        }
+                        .contents{ padding:80px 0; height: 100%;
+                            @include flex-row; justify-content: space-between;
+                            .left_contents {
+                                @include flex-col;justify-content: space-between;
+                                .audi_title {text-align: center;font-size: 22px;color: #fff;font-weight: 400;margin-bottom:50px}
+                                .procedure {
+                                    ul {
+                                        @include flex-row; align-items: center; gap:15px;
+                                        .audi_border {
+                                            display:flex; justify-content: center;align-items: center;
+                                            width: 140px; height: 140px; line-height: 140%;
+                                            border: 2px solid #fff; text-align: center;
+                                            border-radius: 50%; font-size: 20px; color: #fff;
+                                        }
+                                    }
+                                }
+                                .info {
+                                    .audi_info_wrap {
+                                        @include flex-col; gap: 13px;
+                                        .audi_row {
+                                            @include flex-row; gap: 20px;
+                                            dt,dd {
+                                                color:#fff;font-size: 17px; font-weight: 300;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .right_contents {
+                                display: flex; align-items: end;
+                                .supporting {
+                                    @include flex-col; gap:50px;
+                                    align-items: end;
+                                    h2 {
+                                        font-size: 38px; color: #fff; font-weight: 200;
+                                        font-family: "Noto Serif", sans-serif;
+                                    }
+                                    p {
+                                        color: #fff;text-align: end;
+                                        line-height: 170%;font-size:24px; font-weight: 300;
+                                        em {font-size:34px; font-weight: 400;}
+                                    }
+                                    a {
+                                        padding:10px 22px; border: 1px solid #fff;
+                                        color: #fff; border-radius: 20px; font-weight: 600;
+                                        display: flex; align-items: center; font-size:16px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    scrollbar-width: none; 
+                    -ms-overflow-style: none;
+                    &::-webkit-scrollbar { 
+                    display: none;
+                    }
+                }
+            }
         }
-        footer {}
+        footer {
+            .footer_inner {
+                padding: 70px 150px ;
+                @include flex-row;
+                justify-content: space-between;
+                .left {
+                    @include flex-col; gap: 20px; 
+                    .info {color: #999; font-size: 14px; line-height: 130%;}
+                    .copy {color: #999; font-size: 12px;}
+                }
+                .right {
+                    svg {
+                        transform: scale(1.3);
+                    }
+                }
+            }
+        }
     }
 }
 @keyframes artistMore {
