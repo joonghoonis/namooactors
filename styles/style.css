@@ -446,6 +446,7 @@ body #wrap main #filmo .filmo_inner .contents {
   align-items: center;
   justify-content: end;
   gap: 180px;
+  position: relative;
 }
 body #wrap main #filmo .filmo_inner .contents .view_inner .view {
   width: 100%;
@@ -467,7 +468,7 @@ body #wrap main #filmo .filmo_inner .contents .view_inner .view #posters {
   height: 655px;
   position: absolute;
   left: 15%;
-  top: 33%;
+  top: 25%;
   margin-left: -150px;
   margin-top: -150px;
 }
@@ -487,20 +488,19 @@ body #wrap main #filmo .filmo_inner .contents .view_inner .view #posters .swiper
   background-color: #fff;
 }
 body #wrap main #filmo .filmo_inner .contents .view_inner .view .filmo_list {
-  width: 100%;
   position: absolute;
   top: 50%;
-  right: 20%;
+  left: 38%;
   transform: translateY(-50%);
   display: flex;
   align-items: center;
   justify-content: end;
-  margin-top: 2%;
+  margin-top: 1.5%;
 }
 body #wrap main #filmo .filmo_inner .contents .view_inner .view .filmo_list ul {
   display: flex;
   flex-flow: column nowrap;
-  gap: 25px;
+  gap: 22px;
 }
 body #wrap main #filmo .filmo_inner .contents .view_inner .view .filmo_list ul .text {
   padding: 0 5%;
@@ -609,8 +609,8 @@ body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper {
   align-items: center;
 }
 body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide {
-  width: 300px;
-  height: 490px;
+  width: 250px;
+  height: 450px;
   transition: transform 0.4s, opacity 0.4s, filter 0.4s;
   z-index: 10;
   transform: scale(0.9);
