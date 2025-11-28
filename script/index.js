@@ -860,3 +860,136 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     });
 });
+document.addEventListener('DOMContentLoaded', function () {
+    const scene = document.querySelector('.scene');
+    if (!scene) return;
+  
+    const mainPlayer = scene.querySelector('.scene_main_player');
+    const iframe = mainPlayer?.querySelector('iframe');
+    const mainThumbOverlay = mainPlayer?.querySelector('.scene_main_thumb');
+    const mainPlayBtn = mainPlayer?.querySelector('.scene_main_play');
+    const mainTitleEl = mainPlayer?.querySelector('.scene_main_title');
+    const mainThumbImg = mainThumbOverlay?.querySelector('img');
+  
+    // 메인 영상 기본 src 저장 (나중에 swap할 때 쓰려고)
+    if (iframe && !mainPlayer.dataset.videoSrc) {
+      mainPlayer.dataset.videoSrc = iframe.src;
+    }
+  
+    // autoplay 붙이는 유틸
+    function buildAutoplaySrc(baseSrc) {
+      if (!baseSrc) return '';
+      let url = baseSrc;
+      // 이미 autoplay가 붙어있으면 중복 방지
+      if (!url.includes('autoplay=1')) {
+        url += (url.includes('?') ? '&' : '?') + 'autoplay=1';
+      }
+      return url;
+    }
+  
+    function hideOverlay() {
+      if (mainThumbOverlay) {
+        mainThumbOverlay.style.display = 'none';
+      }
+    }
+  
+    function showOverlay() {
+      if (mainThumbOverlay) {
+        mainThumbOverlay.style.display = '';
+      }
+    }
+  
+    // 메인 재생 버튼 (오버레이) 클릭 시
+    if (mainPlayBtn) {
+      mainPlayBtn.addEventListener('click', function () {
+        const baseSrc = mainPlayer.dataset.videoSrc || iframe.src;
+        iframe.src = buildAutoplaySrc(baseSrc);
+        hideOverlay();
+      });
+  
+      // 오버레이 전체 클릭도 재생되게
+      if (mainThumbOverlay) {
+        mainThumbOverlay.addEventListener('click', function () {
+          const baseSrc = mainPlayer.dataset.videoSrc || iframe.src;
+          iframe.src = buildAutoplaySrc(baseSrc);
+          hideOverlay();
+        });
+      }
+    }
+  
+    // 플레이리스트(스와이퍼 썸네일)
+    const thumbSlides = scene.querySelectorAll('#scenePlaylistSwiper .scene_thumb');
+  
+    // Swiper 초기화 (이미 어딘가에서 하고 있으면 이 부분은 빼도 됨)
+    if (window.Swiper) {
+      new Swiper('#scenePlaylistSwiper', {
+        direction: 'vertical',
+        slidesPerView: 3,
+        spaceBetween: 10,
+        mousewheel: true
+      });
+    }
+  
+    // 썸네일 클릭 시 메인과 swap
+    thumbSlides.forEach(function (slide) {
+      const button = slide.querySelector('.scene_thumb_btn');
+      if (!button) return;
+  
+      button.addEventListener('click', function () {
+        const clickedId = slide.dataset.videoId;
+        const clickedSrc = slide.dataset.videoSrc;
+        if (!clickedId || !clickedSrc || !iframe) return;
+  
+        const currentMainId = mainPlayer.dataset.videoId;
+        const currentMainSrc = mainPlayer.dataset.videoSrc || iframe.src;
+  
+        if (clickedId === currentMainId) return; // 이미 메인인 경우
+  
+        const slideImg = slide.querySelector('.scene_thumb_image img');
+        const slideTitleEl = slide.querySelector('.scene_thumb_title');
+  
+        const oldMainTitle = mainTitleEl ? mainTitleEl.textContent.trim() : '';
+        const oldMainThumb = mainThumbImg ? mainThumbImg.src : '';
+  
+        const newTitle = slideTitleEl ? slideTitleEl.textContent.trim() : '';
+        const newThumb = slideImg ? slideImg.src : '';
+  
+        // 1) 메인에 클릭된 썸네일 정보 넣기
+        mainPlayer.dataset.videoId = clickedId;
+        mainPlayer.dataset.videoSrc = clickedSrc;
+  
+        if (mainTitleEl && newTitle) mainTitleEl.textContent = newTitle;
+        if (mainThumbImg && newThumb) mainThumbImg.src = newThumb;
+  
+        // 2) 플레이리스트 썸네일 쪽에는 기존 메인 정보로 교체
+        slide.dataset.videoId = currentMainId;
+        slide.dataset.videoSrc = currentMainSrc;
+  
+        if (slideTitleEl && oldMainTitle) {
+          slideTitleEl.textContent = oldMainTitle;
+        }
+        if (slideImg && oldMainThumb) {
+          slideImg.src = oldMainThumb;
+        }
+  
+        // 3) active 스타일 관리
+        thumbSlides.forEach(function (s) {
+          s.classList.remove('is-active');
+        });
+        slide.classList.add('is-active');
+  
+        // 4) 새 영상 재생 + 오버레이 숨김
+        iframe.src = buildAutoplaySrc(clickedSrc);
+        hideOverlay();
+      });
+    });
+  
+    // 초기 active 표시 (메인과 같은 id인 썸네일에 is-active 줄 수도 있음)
+    const initialId = mainPlayer.dataset.videoId;
+    thumbSlides.forEach(function (slide) {
+      if (slide.dataset.videoId === initialId) {
+        slide.classList.add('is-active');
+      }
+    });
+  });
+  
