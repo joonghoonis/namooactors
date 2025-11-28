@@ -848,11 +848,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const nowSwiper = new Swiper('#now_swiper', {
         autoplay: { delay: 6000 },
-        slidesPerView: 6,        
+        slidesPerView: 6.5,        
         centeredSlides: true,         
         loop: true,
         speed: 700,
-        spaceBetween: 0, 
+        spaceBetween: 30, 
 
         navigation: {
             nextEl: '#now .swiper-button-next',
