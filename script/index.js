@@ -860,136 +860,166 @@ document.addEventListener('DOMContentLoaded', () => {
         },
     });
 });
+/* ===========================scene===================================== */
 document.addEventListener('DOMContentLoaded', function () {
-    const scene = document.querySelector('.scene');
-    if (!scene) return;
-  
-    const mainPlayer = scene.querySelector('.scene_main_player');
-    const iframe = mainPlayer?.querySelector('iframe');
-    const mainThumbOverlay = mainPlayer?.querySelector('.scene_main_thumb');
-    const mainPlayBtn = mainPlayer?.querySelector('.scene_main_play');
-    const mainTitleEl = mainPlayer?.querySelector('.scene_main_title');
-    const mainThumbImg = mainThumbOverlay?.querySelector('img');
-  
-    // 메인 영상 기본 src 저장 (나중에 swap할 때 쓰려고)
-    if (iframe && !mainPlayer.dataset.videoSrc) {
-      mainPlayer.dataset.videoSrc = iframe.src;
+const scene = document.querySelector('.scene');
+if (!scene) return;
+
+const mainPlayer = scene.querySelector('.scene_main_player');
+if (!mainPlayer) return;
+
+const iframe = mainPlayer.querySelector('iframe');
+const mainThumbOverlay = mainPlayer.querySelector('.scene_main_thumb');
+const mainPlayBtn = mainThumbOverlay ? mainThumbOverlay.querySelector('.scene_main_play') : null;
+const mainTitleEl = mainPlayer.querySelector('.scene_main_title');
+const mainThumbImg = mainThumbOverlay ? mainThumbOverlay.querySelector('img') : null;
+
+if (!iframe || !mainThumbOverlay) return;
+
+const FADE_DURATION = 300; // ms (SCSS의 0.3s와 맞추기)
+
+// 메인 기본 src 세팅
+if (!mainPlayer.dataset.videoSrc) {
+    mainPlayer.dataset.videoSrc = iframe.src;
+}
+
+// autoplay 붙이는 함수
+function buildAutoplaySrc(baseSrc) {
+    if (!baseSrc) return '';
+    let url = baseSrc;
+    if (!url.includes('autoplay=1')) {
+    url += (url.includes('?') ? '&' : '?') + 'autoplay=1';
     }
-  
-    // autoplay 붙이는 유틸
-    function buildAutoplaySrc(baseSrc) {
-      if (!baseSrc) return '';
-      let url = baseSrc;
-      // 이미 autoplay가 붙어있으면 중복 방지
-      if (!url.includes('autoplay=1')) {
-        url += (url.includes('?') ? '&' : '?') + 'autoplay=1';
-      }
-      return url;
-    }
-  
-    function hideOverlay() {
-      if (mainThumbOverlay) {
-        mainThumbOverlay.style.display = 'none';
-      }
-    }
-  
-    function showOverlay() {
-      if (mainThumbOverlay) {
-        mainThumbOverlay.style.display = '';
-      }
-    }
-  
-    // 메인 재생 버튼 (오버레이) 클릭 시
-    if (mainPlayBtn) {
-      mainPlayBtn.addEventListener('click', function () {
-        const baseSrc = mainPlayer.dataset.videoSrc || iframe.src;
-        iframe.src = buildAutoplaySrc(baseSrc);
-        hideOverlay();
-      });
-  
-      // 오버레이 전체 클릭도 재생되게
-      if (mainThumbOverlay) {
-        mainThumbOverlay.addEventListener('click', function () {
-          const baseSrc = mainPlayer.dataset.videoSrc || iframe.src;
-          iframe.src = buildAutoplaySrc(baseSrc);
-          hideOverlay();
-        });
-      }
-    }
-  
-    // 플레이리스트(스와이퍼 썸네일)
-    const thumbSlides = scene.querySelectorAll('#scenePlaylistSwiper .scene_thumb');
-  
-    // Swiper 초기화 (이미 어딘가에서 하고 있으면 이 부분은 빼도 됨)
-    if (window.Swiper) {
-      new Swiper('#scenePlaylistSwiper', {
-        direction: 'vertical',
-        slidesPerView: 3,
-        spaceBetween: 10,
-        mousewheel: true
-      });
-    }
-  
-    // 썸네일 클릭 시 메인과 swap
-    thumbSlides.forEach(function (slide) {
-      const button = slide.querySelector('.scene_thumb_btn');
-      if (!button) return;
-  
-      button.addEventListener('click', function () {
-        const clickedId = slide.dataset.videoId;
-        const clickedSrc = slide.dataset.videoSrc;
-        if (!clickedId || !clickedSrc || !iframe) return;
-  
-        const currentMainId = mainPlayer.dataset.videoId;
-        const currentMainSrc = mainPlayer.dataset.videoSrc || iframe.src;
-  
-        if (clickedId === currentMainId) return; // 이미 메인인 경우
-  
-        const slideImg = slide.querySelector('.scene_thumb_image img');
-        const slideTitleEl = slide.querySelector('.scene_thumb_title');
-  
-        const oldMainTitle = mainTitleEl ? mainTitleEl.textContent.trim() : '';
-        const oldMainThumb = mainThumbImg ? mainThumbImg.src : '';
-  
-        const newTitle = slideTitleEl ? slideTitleEl.textContent.trim() : '';
-        const newThumb = slideImg ? slideImg.src : '';
-  
-        // 1) 메인에 클릭된 썸네일 정보 넣기
+    return url;
+}
+
+// === 오버레이 페이드 제어 ===
+function hideOverlay() {
+    mainThumbOverlay.classList.add('is-hidden');   // opacity: 0 으로 페이드 아웃
+}
+
+function showOverlay() {
+    mainThumbOverlay.classList.remove('is-hidden'); // 다시 보이게
+}
+
+// 메인 썸네일/버튼 클릭 → 현재 mainPlayer.dataset.videoSrc 기준으로 재생
+function playCurrentMain() {
+    const baseSrc = mainPlayer.dataset.videoSrc || iframe.src;
+    iframe.src = buildAutoplaySrc(baseSrc); // autoplay 추가
+    hideOverlay();                          // ★ 썸네일/버튼도 페이드로 사라짐
+}
+
+if (mainPlayBtn) {
+    mainPlayBtn.addEventListener('click', playCurrentMain);
+}
+// 썸네일 전체 클릭도 재생
+mainThumbOverlay.addEventListener('click', playCurrentMain);
+
+// === 플레이리스트 Swiper 초기화 ===
+const playlistSwiperEl = scene.querySelector('#scenePlaylistSwiper');
+let playlistSwiper = null;
+
+if (window.Swiper && playlistSwiperEl) {
+    playlistSwiper = new Swiper('#scenePlaylistSwiper', {
+    direction: 'vertical',
+    slidesPerView: 'auto',   // 썸네일 높이는 CSS에 맡김
+    freeMode: true,
+    spaceBetween: 10,
+    mousewheel: {
+        enabled: true,
+        releaseOnEdges: true
+    },
+    nested: true
+    });
+
+    // 플레이리스트 위에서 휠 → 바깥 스와이퍼로 이벤트 안 올라가게
+    playlistSwiperEl.addEventListener('wheel', function (e) {
+    e.stopPropagation();
+    }, { passive: false });
+}
+
+// === 플레이리스트 썸네일 클릭 시: 메인 전체 페이드 + 내용 교체, 재생 X ===
+const thumbSlides = scene.querySelectorAll('#scenePlaylistSwiper .scene_thumb');
+
+thumbSlides.forEach(function (slide) {
+    const button = slide.querySelector('.scene_thumb_btn');
+    if (!button) return;
+
+    button.addEventListener('click', function () {
+    const clickedId = slide.dataset.videoId;
+    const clickedSrc = slide.dataset.videoSrc; // autoplay 없는 embed URL
+    if (!clickedSrc) return;
+
+    const slideImg = slide.querySelector('.scene_thumb_image img');
+    const slideTitleEl = slide.querySelector('.scene_thumb_title');
+
+    const newTitle = slideTitleEl ? slideTitleEl.textContent.trim() : '';
+    const newThumb = slideImg ? slideImg.src : '';
+
+    // 이미 페이드 중이면 중복 클릭 무시
+    if (mainPlayer.classList.contains('is-fading')) return;
+
+    // 1) 메인 전체 페이드 아웃
+    mainPlayer.classList.add('is-fading');
+
+    // 2) 페이드 아웃 끝난 뒤 내용 교체
+    setTimeout(function () {
+        // 메인 데이터 업데이트
+        if (clickedId) {
         mainPlayer.dataset.videoId = clickedId;
+        }
         mainPlayer.dataset.videoSrc = clickedSrc;
-  
-        if (mainTitleEl && newTitle) mainTitleEl.textContent = newTitle;
-        if (mainThumbImg && newThumb) mainThumbImg.src = newThumb;
-  
-        // 2) 플레이리스트 썸네일 쪽에는 기존 메인 정보로 교체
-        slide.dataset.videoId = currentMainId;
-        slide.dataset.videoSrc = currentMainSrc;
-  
-        if (slideTitleEl && oldMainTitle) {
-          slideTitleEl.textContent = oldMainTitle;
+
+        if (mainTitleEl && newTitle) {
+        mainTitleEl.textContent = newTitle;
         }
-        if (slideImg && oldMainThumb) {
-          slideImg.src = oldMainThumb;
+        if (mainThumbImg && newThumb) {
+        mainThumbImg.src = newThumb;
         }
-  
-        // 3) active 스타일 관리
+
+        // iframe에 새 영상 로드 (autoplay 없이)
+        iframe.src = clickedSrc;
+
+        // 항상 "썸네일 + 버튼" 상태로 시작해야 하니까 오버레이 다시 보이게
+        showOverlay();
+
+        // 플레이리스트 active 상태
         thumbSlides.forEach(function (s) {
-          s.classList.remove('is-active');
+        s.classList.remove('is-active');
         });
         slide.classList.add('is-active');
-  
-        // 4) 새 영상 재생 + 오버레이 숨김
-        iframe.src = buildAutoplaySrc(clickedSrc);
-        hideOverlay();
-      });
+
+        // 3) 메인 다시 페이드 인
+        mainPlayer.classList.remove('is-fading');
+    }, FADE_DURATION);
     });
-  
-    // 초기 active 표시 (메인과 같은 id인 썸네일에 is-active 줄 수도 있음)
-    const initialId = mainPlayer.dataset.videoId;
+});
+
+// 초기 active 처리
+const initialId = mainPlayer.dataset.videoId;
+if (initialId) {
     thumbSlides.forEach(function (slide) {
-      if (slide.dataset.videoId === initialId) {
+    if (slide.dataset.videoId === initialId) {
         slide.classList.add('is-active');
-      }
+    }
     });
+}
+});
+/* ========================================photo======================================  */
+var photoSwiper = new Swiper(".photo .swiper", {
+    effect: "coverflow",
+    grabCursor: true,
+    centeredSlides: true,
+    slidesPerView: "auto",
+    coverflowEffect: {
+      rotate: 50,
+      stretch: 0,
+      depth: 100,
+      modifier: 1,
+      slideShadows: true,
+    },
+    navigation: {
+        nextEl: '.photo_inner .swiper_btn .swiper-button-next',
+        prevEl: '.photo_inner .swiper_btn .swiper-button-prev'
+    }
   });
-  

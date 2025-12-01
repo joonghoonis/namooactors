@@ -408,14 +408,18 @@ body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player {
   position: relative;
+  opacity: 1;
+  transition: opacity 0.3s;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_thumb {
   position: absolute;
   inset: 0;
+  opacity: 1;
+  transition: opacity 0.3s ease;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_thumb img {
-  width: 100%;
-  height: 100%;
+  width: 1000px;
+  height: 562px;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_thumb .scene_main_play {
   position: absolute;
@@ -444,20 +448,27 @@ body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap
   position: absolute;
   z-index: 1;
 }
+body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_thumb.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_info {
   position: absolute;
-  bottom: 10%;
+  bottom: 5%;
   left: 5%;
   z-index: 2;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player .scene_main_info .scene_main_title {
   transition: color 0.3s;
   font-size: 32px;
-  color: #ccc;
+  color: #aaa;
   font-weight: 500;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player:hover .scene_main_info .scene_main_title {
   color: #fff;
+}
+body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_main_player.is-fading {
+  opacity: 0;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_playlist {
   flex: 0 0 225.5px;
@@ -475,7 +486,7 @@ body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap
   color: #ccc;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_playlist #scenePlaylistSwiper {
-  max-height: 520px;
+  max-height: 562px;
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_playlist #scenePlaylistSwiper .scene_thumb {
   position: relative;
@@ -491,13 +502,13 @@ body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_playlist #scenePlaylistSwiper .scene_thumb .scene_thumb_btn .scene_thumb_info {
   position: absolute;
-  left: 5%;
+  left: 3%;
   bottom: 10%;
   flex: 1 1 auto;
   font-size: 13px;
   line-height: 1.4;
   font-weight: 500;
-  color: #ddd;
+  color: #aaa;
   z-index: 2;
   white-space: nowrap;
   transition: color 0.3s;
@@ -514,6 +525,40 @@ body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap
 }
 body #wrap main #media .media_inner .contents .media_contents .scene .scene_wrap .scene_main .scene_playlist #scenePlaylistSwiper .scene_thumb .scene_thumb_btn:hover .scene_thumb_info {
   color: #fff;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo {
+  width: 100%;
+  position: absolute;
+  top: 50%;
+  transform: translate(50%, -50%);
+  left: -50%;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .media_photo_swiper {
+  width: 100%;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .media_photo_swiper .swiper-wrapper .swiper-slide {
+  background-position: center;
+  background-size: cover;
+  width: 336px;
+  height: 447px;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .media_photo_swiper .swiper-wrapper .swiper-slide a img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .swiper_btn {
+  position: absolute;
+  bottom: -20%;
+  right: 150px;
+  display: flex;
+  flex-flow: row nowrap;
+  z-index: 100;
+  gap: 40px;
+}
+body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .swiper_btn .swiper-button-next, body #wrap main #media .media_inner .contents .media_contents .photo .photo_inner .swiper_btn .swiper-button-prev {
+  position: static;
+  transition: opacity 0.3s;
 }
 body #wrap main #media .media_inner .contents .media_contents > div {
   opacity: 0;
