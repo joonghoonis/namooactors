@@ -702,7 +702,7 @@ body {
                                 .swiper-slide {
                                     width: 260px;
                                     height: 400px;
-                                    transition:transform 0.4s, opacity 0.4s,filter 0.4s;
+                                    transition:transform 0.4s, opacity 0.4s,filter 0.4s , width 0.4s, height 0.4s;
                                     z-index: 10;         transform: scale(1);
                                     filter: grayscale(100%);
                                     a {
@@ -721,7 +721,7 @@ body {
                                     opacity: 1; z-index: 90;
                                     filter: grayscale(0);
                                     a::after {
-                                        content: ''; display: block; width: 300px; height:400px; opacity: 1;
+                                        content: ''; display: block; width: 110%; height:110%; opacity: 1;
                                         background: #060606;position: absolute; top:0;z-index: -1; left: 50%;  top: 50%;
                                         transform: translate(-50%, -50%);
                                     }

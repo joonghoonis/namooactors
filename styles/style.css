@@ -830,7 +830,7 @@ body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper {
 body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide {
   width: 260px;
   height: 400px;
-  transition: transform 0.4s, opacity 0.4s, filter 0.4s;
+  transition: transform 0.4s, opacity 0.4s, filter 0.4s, width 0.4s, height 0.4s;
   z-index: 10;
   transform: scale(1);
   filter: grayscale(100%);
@@ -859,8 +859,8 @@ body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-sl
 body #wrap main #now .now_inner .contents #now_swiper .swiper-wrapper .swiper-slide.swiper-slide-active a::after {
   content: "";
   display: block;
-  width: 300px;
-  height: 400px;
+  width: 110%;
+  height: 110%;
   opacity: 1;
   background: #060606;
   position: absolute;
